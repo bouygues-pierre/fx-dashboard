@@ -33,7 +33,7 @@ th{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase}td:f
 canvas{max-height:300px}
 </style></head><body>
 <div class="top"><h1>FX Bot - <span>Forward test</span></h1>
-<div class="live"><span class="dot"></span>MAJ 2026-06-28 17:51:10 - auto-refresh 120s</div></div>
+<div class="live"><span class="dot"></span>MAJ 2026-06-28 17:56:42 - auto-refresh 120s</div></div>
 <div class="kpis" id="kpis"></div>
 <div id="today"></div>
 <div class="grid">
@@ -48,7 +48,7 @@ canvas{max-height:300px}
   <div class="card c6"><h3>Win rate glissant (20 trades)</h3><canvas id="rwr"></canvas></div>
   <div class="card c12"><h3>Trades recents</h3><div id="recent"></div></div>
 </div>
-<script>const D={"kpis": [{"label": "Balance", "value": "10,000", "unit": "EUR", "tone": "neutral"}, {"label": "PnL net", "value": "+0", "unit": "EUR", "tone": "pos"}, {"label": "Rendement", "value": "+0.0", "unit": "%", "tone": "pos"}, {"label": "Trades", "value": "0", "unit": "", "tone": "neutral"}, {"label": "Win rate", "value": "0", "unit": "%", "tone": "warn"}, {"label": "Profit Factor", "value": "0.00", "unit": "", "tone": "neg"}, {"label": "Max Drawdown", "value": "0.0", "unit": "%", "tone": "neg"}, {"label": "Esperance/trade", "value": "+0.0", "unit": "EUR", "tone": "pos"}], "equity": [], "drawdown": [], "by_pair": [], "by_dir": [], "by_session": [], "r_hist": null, "recent": [], "currency": "EUR", "streak": 0, "streak_win": false, "daily": [], "last_day": null, "roll_wr": [], "exec": null};
+<script>const D={"kpis": [{"label": "Balance", "value": "100,000", "unit": "USD", "tone": "neutral"}, {"label": "PnL net", "value": "+0", "unit": "USD", "tone": "pos"}, {"label": "Rendement", "value": "+0.0", "unit": "%", "tone": "pos"}, {"label": "Trades", "value": "0", "unit": "", "tone": "neutral"}, {"label": "Win rate", "value": "0", "unit": "%", "tone": "warn"}, {"label": "Profit Factor", "value": "0.00", "unit": "", "tone": "neg"}, {"label": "Max Drawdown", "value": "0.0", "unit": "%", "tone": "neg"}, {"label": "Esperance/trade", "value": "+0.0", "unit": "USD", "tone": "pos"}], "equity": [], "drawdown": [], "by_pair": [], "by_dir": [], "by_session": [], "r_hist": null, "recent": [], "currency": "USD", "streak": 0, "streak_win": false, "daily": [], "last_day": null, "roll_wr": [], "exec": null};
 const cur=D.currency,neg='#f85149',pos='#3fb950',acc='#4c8dff',mut='#8b97a8',line='#222b3a';
 Chart.defaults.color=mut;Chart.defaults.borderColor=line;
 const K=document.getElementById('kpis');D.kpis.forEach(k=>{K.insertAdjacentHTML('beforeend',
