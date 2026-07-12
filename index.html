@@ -1,95 +1,70 @@
 <!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="120">
-<title>FX Bot - Forward test</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="refresh" content="90">
+<title>FX Bot — dashboard</title>
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
 <style>
-:root{--bg:#0b0e14;--card:#141925;--card2:#1b2230;--line:#222b3a;--tx:#e6edf3;--mut:#8b97a8;
---pos:#3fb950;--neg:#f85149;--warn:#d29922;--acc:#4c8dff}
-*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--tx);
-font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;padding:24px;max-width:1280px;margin:0 auto}
-.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px}
-.top h1{font-size:20px;font-weight:650}.top h1 span{color:var(--acc)}
-.live{display:flex;align-items:center;gap:8px;color:var(--mut);font-size:13px}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--pos);animation:p 2s infinite}
-@keyframes p{0%{box-shadow:0 0 0 0 rgba(63,185,80,.5)}70%{box-shadow:0 0 0 7px rgba(63,185,80,0)}100%{box-shadow:0 0 0 0 rgba(63,185,80,0)}}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
-.kpi{background:linear-gradient(160deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:14px;padding:14px 16px}
-.kpi .l{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.6px}
-.kpi .v{font-size:26px;font-weight:680;margin-top:6px}.kpi .u{font-size:14px;color:var(--mut);font-weight:500;margin-left:3px}
-.pos{color:var(--pos)}.neg{color:var(--neg)}.warn{color:var(--warn)}
-.grid{display:grid;gap:14px;grid-template-columns:repeat(12,1fr)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
-.card h3{font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;font-weight:600}
-.c8{grid-column:span 8}.c6{grid-column:span 6}.c4{grid-column:span 4}.c12{grid-column:span 12}
-@media(max-width:900px){.c8,.c6,.c4{grid-column:span 12}}
-table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--line)}
-th{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase}td:first-child,th:first-child{text-align:left}
-.badge{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-.bpos{background:rgba(63,185,80,.15);color:var(--pos)}.bneg{background:rgba(248,81,73,.15);color:var(--neg)}
-.tag{padding:1px 7px;border-radius:6px;font-size:11px;background:#222b3a;color:var(--mut)}
-.exec{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.mini{text-align:center;padding:10px;background:var(--card2);border-radius:12px}.mini .v{font-size:22px;font-weight:680}.mini .l{font-size:11px;color:var(--mut)}
-.empty{color:var(--mut);font-size:13px;padding:20px;text-align:center}
-canvas{max-height:300px}
+ :root{color-scheme:dark}
+ body{margin:0;background:#0e1117;color:#e6e6e6;font-family:-apple-system,Segoe UI,Roboto,sans-serif}
+ .top{padding:12px 16px;border-bottom:1px solid #222;display:flex;flex-wrap:wrap;gap:18px;align-items:baseline}
+ .top b{font-size:18px} .muted{color:#8a8f98;font-size:13px}
+ .up{color:#26a69a} .down{color:#ef5350}
+ .tabs{display:flex;gap:4px;padding:8px 12px 0;border-bottom:1px solid #222}
+ .tab{padding:8px 16px;cursor:pointer;color:#8a8f98;border-bottom:2px solid transparent}
+ .tab.active{color:#e6e6e6;border-bottom-color:#4b9fff}
+ .panel{display:none;padding:14px}
+ .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px}
+ .card{background:#151a23;border:1px solid #222;border-radius:10px;padding:12px}
+ .card h3{margin:0 0 4px;font-size:15px} .row{display:flex;justify-content:space-between;font-size:13px;margin:2px 0}
+ .lbl{color:#8a8f98} .chart{position:relative;height:220px;margin-top:8px}
+ .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
+ .kpi{background:#151a23;border-radius:8px;padding:10px}.kpi .v{font-size:22px}.kpi .k{color:#8a8f98;font-size:12px}
+ table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:5px 8px;text-align:right;border-bottom:1px solid #1c222c}
+ th:first-child,td:first-child{text-align:left} .flat{padding:40px;text-align:center;color:#8a8f98}
+ .badge{padding:1px 8px;border-radius:6px;font-size:12px}.long{background:#0f3b32;color:#26a69a}.short{background:#3b1f22;color:#ef5350}
 </style></head><body>
-<div class="top"><h1>FX Bot - <span>Forward test</span></h1>
-<div class="live"><span class="dot"></span>MAJ 2026-07-09 05:45:06 - auto-refresh 120s</div></div>
-<div class="kpis" id="kpis"></div>
-<div id="today"></div>
-<div class="grid">
-  <div class="card c8"><h3>Courbe d'equite</h3><canvas id="eq"></canvas></div>
-  <div class="card c4"><h3>Drawdown</h3><canvas id="dd"></canvas></div>
-  <div class="card c4"><h3>PnL par paire</h3><canvas id="pair"></canvas></div>
-  <div class="card c4"><h3>Long / Short</h3><canvas id="dir"></canvas></div>
-  <div class="card c4"><h3>Distribution R</h3><canvas id="rh"></canvas><div id="rh_e" class="empty" style="display:none">R indisponible</div></div>
-  <div class="card c6"><h3>Par session</h3><div id="sess"></div></div>
-  <div class="card c6"><h3>Qualite d'execution</h3><div id="exec"></div></div>
-  <div class="card c6"><h3>PnL quotidien</h3><canvas id="dpnl"></canvas></div>
-  <div class="card c6"><h3>Win rate glissant (20 trades)</h3><canvas id="rwr"></canvas></div>
-  <div class="card c12"><h3>Trades recents</h3><div id="recent"></div></div>
+<div class="top"><b>FX Bot</b><span class="muted">52956691 · ICMarketsEU-Demo</span>
+ <span>Equity <b>200000.00 EUR</b></span><span>Flottant <b class="up">+0.00 EUR</b></span>
+ <span class="muted">maj 2026-07-12 17:09 UTC · refresh 90s</span></div>
+<div class="tabs">
+ <div class="tab" data-tab="live" onclick="showTab('live')">Live</div>
+ <div class="tab" data-tab="week" onclick="showTab('week')">Cette semaine</div>
+ <div class="tab" data-tab="all" onclick="showTab('all')">All-time</div>
 </div>
-<script>const D={"kpis": [{"label": "Balance", "value": "100,000", "unit": "USD", "tone": "neutral"}, {"label": "PnL net", "value": "+0", "unit": "USD", "tone": "pos"}, {"label": "Rendement", "value": "+0.0", "unit": "%", "tone": "pos"}, {"label": "Trades", "value": "0", "unit": "", "tone": "neutral"}, {"label": "Win rate", "value": "0", "unit": "%", "tone": "warn"}, {"label": "Profit Factor", "value": "0.00", "unit": "", "tone": "neg"}, {"label": "Max Drawdown", "value": "0.0", "unit": "%", "tone": "neg"}, {"label": "Esperance/trade", "value": "+0.0", "unit": "USD", "tone": "pos"}], "equity": [], "drawdown": [], "by_pair": [], "by_dir": [], "by_session": [], "r_hist": null, "recent": [], "currency": "USD", "streak": 0, "streak_win": false, "daily": [], "last_day": null, "roll_wr": [], "exec": null};
-const cur=D.currency,neg='#f85149',pos='#3fb950',acc='#4c8dff',mut='#8b97a8',line='#222b3a';
-Chart.defaults.color=mut;Chart.defaults.borderColor=line;
-const K=document.getElementById('kpis');D.kpis.forEach(k=>{K.insertAdjacentHTML('beforeend',
- `<div class="kpi"><div class="l">${k.label}</div><div class="v ${k.tone}">${k.value}<span class="u">${k.unit}</span></div></div>`)});
-function grad(ctx,c){const g=ctx.createLinearGradient(0,0,0,300);g.addColorStop(0,c+'55');g.addColorStop(1,c+'00');return g}
-if(D.equity.length){
-new Chart(eq,{type:'line',data:{labels:D.equity.map(p=>p.t),datasets:[{data:D.equity.map(p=>p.v),
- borderColor:acc,backgroundColor:c=>grad(c.chart.ctx,acc),fill:true,tension:.25,pointRadius:0,borderWidth:2}]},
- options:{plugins:{legend:{display:false}},scales:{x:{display:false},y:{grid:{color:line}}},interaction:{intersect:false,mode:'index'}}});
-new Chart(dd,{type:'line',data:{labels:D.drawdown.map(p=>p.t),datasets:[{data:D.drawdown.map(p=>p.v),
- borderColor:neg,backgroundColor:c=>grad(c.chart.ctx,neg),fill:true,tension:.2,pointRadius:0,borderWidth:1.5}]},
- options:{plugins:{legend:{display:false}},scales:{x:{display:false}}}});
+<div id="live" class="panel"><div class="flat">Aucune position ouverte. Le bot est à plat.</div></div>
+<div id="week" class="panel"><div class="flat">Aucun trade fermé sur la période.</div><div class="muted" style="padding:20px">Pas encore assez de trades fermés pour tracer la courbe.</div><p class="muted">Exécution (semaine) — spread 0.00 pips · slippage +0.10 pips · écart-signal +0.20 pips.</p></div>
+<div id="all" class="panel"><div class="flat">Aucun trade fermé sur la période.</div><div class="muted" style="padding:20px">Pas encore assez de trades fermés pour tracer la courbe.</div><p class="muted">Exécution (all-time, 1 fills) — slippage moyen +0.10 pips · écart-signal +0.20 pips. C'est le juge du forward : s'il reste petit, le R réalisé colle au backtest.</p><div class="grid" style="margin-top:14px"><div class="card"><h3>Trades par paire</h3><div class="muted">—</div></div><div class="card"><h3>Gagnants / perdants</h3><div class="muted">—</div></div><div class="card"><h3>Distribution des R (la traine = l edge)</h3></div></div></div>
+<script>
+const LIVE = {"positions": [], "charts": {}};
+function showTab(id){
+  document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).style.display='block';
+  document.querySelector('[data-tab='+id+']').classList.add('active');
+  try{localStorage.setItem('fxtab',id)}catch(e){}
+  if(id==='live') Object.values(window._charts||{}).forEach(c=>{try{c.timeScale().fitContent()}catch(e){}});
 }
-const bp=D.by_pair;if(bp.length)new Chart(pair,{type:'bar',data:{labels:bp.map(p=>p.k),datasets:[{data:bp.map(p=>p.pnl),
- backgroundColor:bp.map(p=>p.pnl>=0?pos:neg),borderRadius:5}]},options:{plugins:{legend:{display:false}},indexAxis:'y'}});
-const bd=D.by_dir;if(bd.length)new Chart(dir,{type:'doughnut',data:{labels:bd.map(p=>p.k),datasets:[{data:bd.map(p=>Math.abs(p.pnl)),
- backgroundColor:[acc,'#a371f7','#d29922']}]},options:{cutout:'62%',plugins:{legend:{position:'bottom'}}}});
-if(D.r_hist){new Chart(rh,{type:'bar',data:{labels:D.r_hist.labels,datasets:[{data:D.r_hist.counts,
- backgroundColor:D.r_hist.labels.map(l=>parseFloat(l)>=0?pos:neg),borderRadius:3}]},options:{plugins:{legend:{display:false}}}});}
-else{rh.style.display='none';document.getElementById('rh_e').style.display='block';}
-const T=D.last_day;document.getElementById('today').innerHTML=T?`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 16px">
- <div class="kpi"><div class="l">Derniere journee</div><div class="v">${T.date}</div></div>
- <div class="kpi"><div class="l">PnL du jour</div><div class="v ${T.pnl>=0?'pos':'neg'}">${T.pnl>=0?'+':''}${T.pnl}<span class="u">${cur}</span></div></div>
- <div class="kpi"><div class="l">Trades du jour</div><div class="v">${T.n}</div></div>
- <div class="kpi"><div class="l">Win rate du jour</div><div class="v">${T.wr}<span class="u">%</span></div></div></div>`:'';
-if(D.daily&&D.daily.length)new Chart(dpnl,{type:'bar',data:{labels:D.daily.map(p=>p.d),datasets:[{data:D.daily.map(p=>p.pnl),
- backgroundColor:D.daily.map(p=>p.pnl>=0?pos:neg),borderRadius:3}]},options:{plugins:{legend:{display:false}},scales:{x:{display:false}}}});
-if(D.roll_wr&&D.roll_wr.length)new Chart(rwr,{type:'line',data:{labels:D.roll_wr.map(p=>p.t),datasets:[{data:D.roll_wr.map(p=>p.v),
- borderColor:'#eda100',backgroundColor:c=>grad(c.chart.ctx,'#eda100'),fill:true,tension:.3,pointRadius:0,borderWidth:1.5}]},
- options:{plugins:{legend:{display:false}},scales:{x:{display:false},y:{suggestedMin:0,suggestedMax:100,grid:{color:line}}}}});
-function tbl(rows,cols){if(!rows.length)return '<div class="empty">Pas encore de donnees</div>';
- let h='<table><tr>'+cols.map(c=>`<th>${c[0]}</th>`).join('')+'</tr>';
- rows.forEach(r=>{h+='<tr>'+cols.map(c=>`<td>${c[1](r)}</td>`).join('')+'</tr>'});return h+'</table>'}
-document.getElementById('sess').innerHTML=tbl(D.by_session,[['Session',r=>r.k],['Trades',r=>r.n],
- ['WR%',r=>r.wr],['PF',r=>`<span class="${r.pf>=1?'pos':'neg'}">${r.pf}</span>`],['PnL',r=>`<span class="${r.pnl>=0?'pos':'neg'}">${r.pnl}</span>`]]);
-const E=D.exec;document.getElementById('exec').innerHTML=E? `<div class="exec">
- <div class="mini"><div class="v">${E.spread??'-'}</div><div class="l">Spread paye (pip)</div></div>
- <div class="mini"><div class="v">${E.slip??'-'}</div><div class="l">Slippage (pip)</div></div>
- <div class="mini"><div class="v">${E.gap??'-'}</div><div class="l">Gap vs backtest (pip)</div></div></div>
- <div class="empty" style="padding:8px">${E.n} fills loggés</div>`:'<div class="empty">Aucun log d\'execution encore</div>';
-document.getElementById('recent').innerHTML=tbl(D.recent,[['Paire',r=>r.symbol],['Sens',r=>`<span class="tag">${r.dir}</span>`],
- ['Ouvert',r=>r.open],['Ferme',r=>r.close],['Score',r=>r.score??'-'],['Pips',r=>r.pips??'-'],['R',r=>r.R??'-'],
- ['PnL',r=>`<span class="badge ${r.pnl>=0?'bpos':'bneg'}">${r.pnl>=0?'+':''}${r.pnl} ${cur}</span>`]]);
+function drawLive(){
+  window._charts={};
+  (LIVE.positions||[]).forEach(pos=>{
+    const el=document.getElementById('c'+pos.ticket); if(!el||!window.LightweightCharts) return;
+    const chart=LightweightCharts.createChart(el,{layout:{background:{color:'transparent'},textColor:'#8a8f98'},
+      grid:{vertLines:{color:'#1c222c'},horzLines:{color:'#1c222c'}},rightPriceScale:{borderColor:'#222'},
+      timeScale:{borderColor:'#222',timeVisible:true,secondsVisible:false},crosshair:{mode:0},autoSize:true});
+    const s=chart.addCandlestickSeries({upColor:'#26a69a',downColor:'#ef5350',borderVisible:false,
+      wickUpColor:'#26a69a',wickDownColor:'#ef5350'});
+    s.setData((LIVE.charts||{})[pos.symbol]||[]);
+    [['e',pos.entry,'#4b9fff',0,'entrée'],['sl',pos.sl,'#ef5350',2,'SL'],['tp',pos.tp,'#26a69a',2,'TP']]
+      .forEach(a=>{if(a[1])s.createPriceLine({price:a[1],color:a[2],lineWidth:1,lineStyle:a[3],axisLabelVisible:true,title:a[4]})});
+    chart.timeScale().fitContent(); window._charts[pos.ticket]=chart;
+    function shade(){try{el.querySelectorAll('.zone').forEach(z=>z.remove());
+      const yE=s.priceToCoordinate(pos.entry),ySL=s.priceToCoordinate(pos.sl),yTP=s.priceToCoordinate(pos.tp);
+      if(yE==null)return; function b(y1,y2,c){if(y1==null||y2==null)return;const d=document.createElement('div');
+        d.className='zone';d.style.cssText='position:absolute;left:0;right:0;pointer-events:none;background:'+c
+        +';top:'+Math.min(y1,y2)+'px;height:'+Math.abs(y2-y1)+'px';el.appendChild(d);}
+      b(yE,ySL,'rgba(239,83,80,0.10)');b(yE,yTP,'rgba(38,166,154,0.10)');}catch(e){}}
+    shade();chart.timeScale().subscribeVisibleLogicalRangeChange(shade);new ResizeObserver(shade).observe(el);
+  });
+}
+window.addEventListener('load',()=>{drawLive();let t='live';try{t=localStorage.getItem('fxtab')||'live'}catch(e){}
+  showTab(document.getElementById(t)?t:'live');});
 </script></body></html>
