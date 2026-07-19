@@ -8,6 +8,8 @@
  .top{padding:12px 16px;border-bottom:1px solid #222;display:flex;flex-wrap:wrap;gap:18px;align-items:baseline}
  .top b{font-size:18px} .muted{color:#8a8f98;font-size:13px}
  .up{color:#26a69a} .down{color:#ef5350}
+ .dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:5px;vertical-align:middle}
+ .dot.green{background:#26a69a}.dot.grey{background:#666}.dot.red{background:#ef5350}.dot.sleep{background:#4b9fff}
  .tabs{display:flex;gap:4px;padding:8px 12px 0;border-bottom:1px solid #222}
  .tab{padding:8px 16px;cursor:pointer;color:#8a8f98;border-bottom:2px solid transparent}
  .tab.active{color:#e6e6e6;border-bottom-color:#4b9fff}
@@ -22,19 +24,26 @@
  th:first-child,td:first-child{text-align:left} .flat{padding:40px;text-align:center;color:#8a8f98}
  .badge{padding:1px 8px;border-radius:6px;font-size:12px}.long{background:#0f3b32;color:#26a69a}.short{background:#3b1f22;color:#ef5350}
 </style></head><body>
-<div class="top"><b>FX Bot</b><span class="muted">52956691 · ICMarketsEU-Demo</span>
+<div id="stale" style="display:none;background:#5a1f22;color:#ffb3b3;padding:8px 16px;font-size:14px">⚠️ Page non mise à jour depuis <span id="stalemin"></span> — le PC ou le publisher est peut-être arrêté.</div>
+<div class="top"><b>FX Bot</b>
+ <span><span class="dot grey"></span><b>état inconnu (pas de heartbeat)</b></span>
+ <span class="muted">52956691 · ICMarketsEU-Demo</span>
  <span>Equity <b>197773.08 EUR</b></span><span>Flottant <b class="up">+0.00 EUR</b></span>
- <span class="muted">maj 2026-07-17 06:11 UTC · refresh 90s</span></div>
+ <span class="muted">maj 2026-07-19 23:50 UTC · refresh 90s</span></div>
 <div class="tabs">
  <div class="tab" data-tab="live" onclick="showTab('live')">Live</div>
  <div class="tab" data-tab="week" onclick="showTab('week')">Cette semaine</div>
  <div class="tab" data-tab="all" onclick="showTab('all')">All-time</div>
+ <div class="tab" data-tab="journal" onclick="showTab('journal')">Journal</div>
 </div>
 <div id="live" class="panel"><div class="flat">Aucune position ouverte. Le bot est à plat.</div></div>
 <div id="week" class="panel"><div class="flat">Aucun trade fermé sur la période.</div><div class="muted" style="padding:20px">Pas encore assez de trades fermés pour tracer la courbe.</div><p class="muted">Exécution (semaine) — spread 1.30 pips · slippage +0.00 pips · écart-signal +1.30 pips.</p></div>
 <div id="all" class="panel"><div class="flat">Aucun trade fermé sur la période.</div><div class="muted" style="padding:20px">Pas encore assez de trades fermés pour tracer la courbe.</div><p class="muted">Exécution (all-time, 2 fills) — slippage moyen +0.05 pips · écart-signal +0.75 pips. C'est le juge du forward : s'il reste petit, le R réalisé colle au backtest.</p><div class="grid" style="margin-top:14px"><div class="card"><h3>Trades par paire</h3><div class="muted">—</div></div><div class="card"><h3>Gagnants / perdants</h3><div class="muted">—</div></div><div class="card"><h3>Distribution des R (la traine = l edge)</h3></div></div></div>
+<div id="journal" class="panel"><p class="muted">Connexions / déconnexions du bot. Un RECONNECT avec « downtime » = coupure de courant, plantage ou perte MT5 pendant ton absence.</p><table><tr><th>quand (UTC)</th><th>évènement</th><th>détail</th></tr><tr><td>2026-07-19T23:50:30</td><td>🟢 démarré</td><td>bot demarre</td></tr></table></div>
 <script>
 const LIVE = {"positions": [], "charts": {}};
+const UPDATED_EPOCH = 1784505030;
+const SLEEP_UNTIL = 0;
 function showTab(id){
   document.querySelectorAll('.panel').forEach(p=>p.style.display='none');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -65,6 +74,10 @@ function drawLive(){
     shade();chart.timeScale().subscribeVisibleLogicalRangeChange(shade);new ResizeObserver(shade).observe(el);
   });
 }
+function checkStale(){var now=Date.now()/1000;var el=document.getElementById('stale');
+  if(SLEEP_UNTIL && now<SLEEP_UNTIL){el.style.display='none';return;}
+  var age=Math.floor(now-UPDATED_EPOCH);
+  if(age>1500){document.getElementById('stalemin').textContent=Math.floor(age/60)+' min';el.style.display='block';}else{el.style.display='none';}}
 window.addEventListener('load',()=>{drawLive();let t='live';try{t=localStorage.getItem('fxtab')||'live'}catch(e){}
-  showTab(document.getElementById(t)?t:'live');});
+  showTab(document.getElementById(t)?t:'live');checkStale();setInterval(checkStale,30000);});
 </script></body></html>
